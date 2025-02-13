@@ -1,5 +1,5 @@
 import express , { Application } from "express";
-
+import db from "../db";
 
 class Server {
     private app: Application;
@@ -8,6 +8,15 @@ class Server {
     constructor(){
         this.app = express();
         this.port= process.env.PORT || "3000";
+    }
+
+    async dbConnection(){
+        try {
+            await db.authenticate();
+            console.log("Database online")
+        } catch (error: any) {
+            throw new Error(error.message);
+        }
     }
 
     listen(){
