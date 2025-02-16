@@ -13,11 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const morgan_1 = __importDefault(require("morgan"));
 const db_1 = __importDefault(require("./db"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || "3000";
+        this.app.use((0, morgan_1.default)("dev"));
         this.dbConnection();
     }
     dbConnection() {
