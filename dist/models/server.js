@@ -18,6 +18,7 @@ class Server {
     constructor() {
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || "3000";
+        this.dbConnection();
     }
     dbConnection() {
         return __awaiter(this, void 0, void 0, function* () {
