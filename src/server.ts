@@ -1,5 +1,5 @@
 import express , { Application } from "express";
-import db from "../db";
+import db from "./db";
 
 class Server {
     private app: Application;
