@@ -6,8 +6,6 @@ class User extends Model {
     public username!: string;
     public email!: string;
     public password!: string;
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
 }
 
 User.init(
