@@ -13,7 +13,7 @@ export const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
       return res.status(401).json({ message: "No token, authorization denied" });
     }
 
-    jwt.verify(token, TOKEN_SECRET, (error, user) => {
+    jwt.verify(token, TOKEN_SECRET, (error: any, user: any) => {
       if (error) {
         return res.status(401).json({ message: "Token is not valid" });
       }

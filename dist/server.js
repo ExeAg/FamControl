@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const db_1 = __importDefault(require("./db"));
+const user_model_1 = __importDefault(require("./models/user.model"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -27,9 +28,11 @@ class Server {
             try {
                 yield db_1.default.authenticate();
                 console.log("Database online");
+                yield user_model_1.default.sync({ alter: true }); // alter actualiza la tabla según el modelo
+                console.log("Tabla 'users' sincronizada");
             }
             catch (error) {
-                throw new Error(error.message);
+                console.error("Error al conectar a la base de datos:", error.message);
             }
         });
     }

@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";  
-import { TOKEN_SECRET } from "../config";  
+import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
+import { TOKEN_SECRET } from "../config";
 import User from "../models/user.model";
 import { createAccessToken } from "../libs/jwt";
 import bcrypt from "bcryptjs";
@@ -55,31 +55,28 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const verifyToken = async (req: Request, res: Response) => {
-    try {
-      const { token } = req.cookies;
-      if (!token) return res.send(false);
-  
-      // Verificar el token de forma síncrona
-      const decoded = jwt.verify(token, TOKEN_SECRET) as JwtPayload;
-  
-      if (!decoded || typeof decoded !== "object" || !decoded.id) {
-        return res.sendStatus(401);
-      }
-  
-      // Buscar el usuario en la base de datos
-      const userFound = await User.findByPk(decoded.id);
-      if (!userFound) return res.sendStatus(401);
-  
-      return res.json({
-        id: userFound.id,
-        username: userFound.username,
-        email: userFound.email,
-      });
-    } catch (error) {
-      return res.status(500).json({ message: "Error verifying token" });
+export const verifyToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      res.status(401).json({ message: "No token provided" });
+      return;
     }
-  };
+
+    const decoded = jwt.verify(token, TOKEN_SECRET) as JwtPayload;
+    const userFound = await User.findByPk(decoded.id);
+
+    if (!userFound) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    req.user = userFound;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Invalid token" });
+  }
+};
 
 export const logout = (req: Request, res: Response) => {
   res.cookie("token", "", { httpOnly: true, secure: true, expires: new Date(0) });
