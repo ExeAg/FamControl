@@ -21,22 +21,24 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email, password } = req.body;
-        const userFound = yield user_model_1.default.findOne({ where: { email } });
-        if (userFound) {
-            return res.status(400).json({ message: "The email is already in use" });
+        console.log("Password recibido:", password);
+        if (!password || typeof password !== "string") {
+            return res.status(400).json({ error: "Contraseña no válida" });
         }
-        const passwordHash = yield bcryptjs_1.default.hash(password, 10);
-        const newUser = yield user_model_1.default.create({ username, email, password: passwordHash });
-        const token = yield (0, jwt_1.createAccessToken)({ id: newUser.id });
-        res.cookie("token", token, {
-            httpOnly: process.env.NODE_ENV !== "development",
-            secure: true,
-            sameSite: "none",
+        const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
+        console.log("Salt rounds:", saltRounds);
+        const salt = yield bcryptjs_1.default.genSalt(saltRounds);
+        const hashedPassword = yield bcryptjs_1.default.hash(password, salt);
+        const newUser = yield user_model_1.default.create({
+            username,
+            email,
+            password: hashedPassword,
         });
-        res.status(201).json({ id: newUser.id, username: newUser.username, email: newUser.email });
+        return res.status(201).json({ message: "Usuario registrado con éxito", user: newUser });
     }
     catch (error) {
-        res.status(500).json({ message: error instanceof Error ? error.message : "Server error" });
+        console.error("Error en el registro:", error.message);
+        return res.status(500).json({ error: "Error en el servidor" });
     }
 });
 exports.register = register;

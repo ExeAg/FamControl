@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import db from "./db";
 import User from "./models/user.model";
+import authRoutes from "./routes/authRoutes"; // Importar las rutas de autenticación
 
 class Server {
     private app: Application;
@@ -11,6 +12,8 @@ class Server {
         this.app = express();
         this.port = process.env.PORT || "3000";
         this.app.use(morgan("dev"));
+        this.middlewares(); // Agregar middlewares
+        this.routes(); // Agregar rutas
         this.dbConnection();
     }
 
@@ -25,10 +28,19 @@ class Server {
         }
     }
 
+    middlewares() {
+        this.app.use(express.json()); // Permitir JSON en las peticiones
+    }
+
+    routes() {
+        this.app.use("/api/auth", authRoutes); // Registrar rutas
+    }
+
     listen() {
         this.app.listen(this.port, () => {
-            console.log("Servidor corriendo en puerto " + this.port)
-        })
+            console.log("Servidor corriendo en puerto " + this.port);
+        });
     }
 }
+
 export default Server;

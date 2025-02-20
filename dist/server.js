@@ -16,11 +16,14 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const db_1 = __importDefault(require("./db"));
 const user_model_1 = __importDefault(require("./models/user.model"));
+const authRoutes_1 = __importDefault(require("./routes/authRoutes")); // Importar las rutas de autenticación
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || "3000";
         this.app.use((0, morgan_1.default)("dev"));
+        this.middlewares(); // Agregar middlewares
+        this.routes(); // Agregar rutas
         this.dbConnection();
     }
     dbConnection() {
@@ -35,6 +38,12 @@ class Server {
                 console.error("Error al conectar a la base de datos:", error.message);
             }
         });
+    }
+    middlewares() {
+        this.app.use(express_1.default.json()); // Permitir JSON en las peticiones
+    }
+    routes() {
+        this.app.use("/api/auth", authRoutes_1.default); // Registrar rutas
     }
     listen() {
         this.app.listen(this.port, () => {

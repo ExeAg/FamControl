@@ -5,31 +5,37 @@ import User from "../models/user.model";
 import { createAccessToken } from "../libs/jwt";
 import bcrypt from "bcryptjs";
 
+
 export const register = async (req: Request, res: Response) => {
-  try {
-    const { username, email, password } = req.body;
+    try {
+        const { username, email, password } = req.body;
 
-    const userFound = await User.findOne({ where: { email } });
-    if (userFound) {
-      return res.status(400).json({ message: "The email is already in use" });
+        console.log("Password recibido:", password);
+
+        if (!password || typeof password !== "string") {
+            return res.status(400).json({ error: "Contraseña no válida" });
+        }
+
+        const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
+        console.log("Salt rounds:", saltRounds);
+
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = await User.create({
+            username,
+            email,
+            password: hashedPassword,
+        });
+
+        return res.status(201).json({ message: "Usuario registrado con éxito", user: newUser });
+
+    } catch (error: any) {
+        console.error("Error en el registro:", error.message);
+        return res.status(500).json({ error: "Error en el servidor" });
     }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, email, password: passwordHash });
-
-    const token = await createAccessToken({ id: newUser.id });
-
-    res.cookie("token", token, {
-      httpOnly: process.env.NODE_ENV !== "development",
-      secure: true,
-      sameSite: "none",
-    });
-
-    res.status(201).json({ id: newUser.id, username: newUser.username, email: newUser.email });
-  } catch (error) {
-    res.status(500).json({ message: error instanceof Error ? error.message : "Server error" });
-  }
 };
+
 
 export const login = async (req: Request, res: Response) => {
   try {
