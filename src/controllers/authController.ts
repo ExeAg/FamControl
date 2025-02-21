@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { TOKEN_SECRET } from "../config";
 import User from "../models/user.model";
 import { createAccessToken } from "../libs/jwt";

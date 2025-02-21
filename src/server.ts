@@ -31,6 +31,16 @@ class Server {
             console.log("Database online");
             await User.sync({ alter: true }); 
             console.log("Tabla 'users' sincronizada");
+
+            await Ingreso.sync({ alter: true });
+            console.log("Tabla 'ingresos' sincronizada");
+
+            await Gasto.sync({ alter: true });
+            console.log("Tabla 'gastos' sincronizada");
+
+            await Categoria.sync({ alter: true });
+            console.log("Tabla 'categorias' sincronizada");
+
         } catch (error: any) {
             console.error("Error al conectar a la base de datos:", error.message);
         }
@@ -42,7 +52,10 @@ class Server {
 
     routes() {
         this.app.use("/api/auth", authRoutes);
-        this.app.use("/api/familias", familiaRoutes); 
+        this.app.use("/api/familias", familiaRoutes);
+        this.app.use("/api/ingresos", ingresoRoutes);
+        this.app.use("/api/gastos", gastoRoutes);
+        this.app.use("/api/categorias", categoriaRoutes); 
     }
 
     listen() {

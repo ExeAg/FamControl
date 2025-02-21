@@ -16,14 +16,21 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const db_1 = __importDefault(require("./db"));
 const user_model_1 = __importDefault(require("./models/user.model"));
-const authRoutes_1 = __importDefault(require("./routes/authRoutes")); // Importar las rutas de autenticación
+const ingreso_model_1 = __importDefault(require("./models/ingreso.model"));
+const gasto_model_1 = __importDefault(require("./models/gasto.model"));
+const categoria_model_1 = __importDefault(require("./models/categoria.model"));
+const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
+const familiaRoutes_1 = __importDefault(require("./routes/familiaRoutes"));
+const ingresoRoutes_1 = __importDefault(require("./routes/ingresoRoutes"));
+const gastoRoutes_1 = __importDefault(require("./routes/gastoRoutes"));
+const categoriaRoutes_1 = __importDefault(require("./routes/categoriaRoutes"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || "3000";
         this.app.use((0, morgan_1.default)("dev"));
-        this.middlewares(); // Agregar middlewares
-        this.routes(); // Agregar rutas
+        this.middlewares();
+        this.routes();
         this.dbConnection();
     }
     dbConnection() {
@@ -31,8 +38,14 @@ class Server {
             try {
                 yield db_1.default.authenticate();
                 console.log("Database online");
-                yield user_model_1.default.sync({ alter: true }); // alter actualiza la tabla según el modelo
+                yield user_model_1.default.sync({ alter: true });
                 console.log("Tabla 'users' sincronizada");
+                yield ingreso_model_1.default.sync({ alter: true });
+                console.log("Tabla 'ingresos' sincronizada");
+                yield gasto_model_1.default.sync({ alter: true });
+                console.log("Tabla 'gastos' sincronizada");
+                yield categoria_model_1.default.sync({ alter: true });
+                console.log("Tabla 'categorias' sincronizada");
             }
             catch (error) {
                 console.error("Error al conectar a la base de datos:", error.message);
@@ -40,10 +53,14 @@ class Server {
         });
     }
     middlewares() {
-        this.app.use(express_1.default.json()); // Permitir JSON en las peticiones
+        this.app.use(express_1.default.json()); // Para Permitir JSON en las peticiones
     }
     routes() {
-        this.app.use("/api/auth", authRoutes_1.default); // Registrar rutas
+        this.app.use("/api/auth", authRoutes_1.default);
+        this.app.use("/api/familias", familiaRoutes_1.default);
+        this.app.use("/api/ingresos", ingresoRoutes_1.default);
+        this.app.use("/api/gastos", gastoRoutes_1.default);
+        this.app.use("/api/categorias", categoriaRoutes_1.default);
     }
     listen() {
         this.app.listen(this.port, () => {
