@@ -2,8 +2,15 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import db from "./db";
 import User from "./models/user.model";
+import Ingreso from "./models/ingreso.model";
+import Gasto from "./models/gasto.model";
+import Categoria from "./models/categoria.model";
 import authRoutes from "./routes/authRoutes";
 import familiaRoutes from "./routes/familiaRoutes";
+import ingresoRoutes from "./routes/ingresoRoutes";
+import gastoRoutes from "./routes/gastoRoutes";
+import categoriaRoutes from "./routes/categoriaRoutes";
+
 
 class Server {
     private app: Application;
