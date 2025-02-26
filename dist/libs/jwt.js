@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAccessToken = void 0;
+//src/libs/jwt.ts
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("../config");
 function createAccessToken(payload) {

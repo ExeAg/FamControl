@@ -1,3 +1,4 @@
+//RegisterPage.jsx
 import { useEffect } from "react";
 import { useAuth } from "../context/authContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,7 +23,7 @@ function Register() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) navigate("/tasks");
+    if (isAuthenticated) navigate("/");
   }, [isAuthenticated]);
 
   return (
@@ -36,8 +37,9 @@ function Register() {
           <Label htmlFor="username">Username:</Label>
           <Input
             type="text"
-            name="username"
-            placeholder="Write your name"
+            id="username"
+            autoComplete="username"
+            placeholder="Escriba su nombre de Usuario"
             {...register("username")}
             autoFocus
           />
@@ -47,8 +49,10 @@ function Register() {
 
           <Label htmlFor="email">Email:</Label>
           <Input
-            name="email"
-            placeholder="youremail@domain.tld"
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="Ej:tuemail@domino.tld"
             {...register("email")}
           />
           {errors.email?.message && (
@@ -58,7 +62,7 @@ function Register() {
           <Label htmlFor="password">Password:</Label>
           <Input
             type="password"
-            name="password"
+            id="password"
             placeholder="********"
             {...register("password")}
           />
@@ -69,7 +73,7 @@ function Register() {
           <Label htmlFor="confirmPassword">Confirm Password:</Label>
           <Input
             type="password"
-            name="confirmPassword"
+            id="confirmPassword"
             placeholder="********"
             {...register("confirmPassword")}
           />

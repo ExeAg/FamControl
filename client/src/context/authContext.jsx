@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { createContext, useContext, useState } from "react";
-import { loginRequest, registerRequest, verifyTokenRequest } from "../api/auth";
+//client/src/context/authContext.jsx
+import { useEffect, useState, createContext, useContext } from "react";
+import { loginRequest, registerRequest, verifyTokenRequest, logoutRequest } from "../api/auth";
 import Cookies from "js-cookie";
 
 const AuthContext = createContext();
@@ -14,7 +14,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors,] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // clear errors after 5 seconds
@@ -30,31 +30,39 @@ export const AuthProvider = ({ children }) => {
   const signup = async (user) => {
     try {
       const res = await registerRequest(user);
-      if (res.status === 200) {
+      if (res.status === 201) {
         setUser(res.data);
         setIsAuthenticated(true);
       }
     } catch (error) {
       console.log(error.response.data);
-      setErrors(error.response.data.message);
+      setErrors(Array.isArray(error.response.data.message)
+        ? error.response.data.message
+        : [error.response.data.message || "Error en el registro"]);
     }
   };
 
-  const signin = async (user) => {
+  const signin = async (userData) => {
     try {
-      const res = await loginRequest(user);
+      const res = await loginRequest(userData);
       setUser(res.data);
       setIsAuthenticated(true);
     } catch (error) {
-      console.log(error);
-      // setErrors(error.response.data.message);
+      console.log("Error en el inicio de sesión:", error.response?.data || error.message);
+      setErrors(Array.isArray(error.response.data.message)
+        ? error.response.data.message
+        : [error.response.data.message || "Error en el inicio de sesión"]);
     }
   };
 
-  const logout = () => {
-    Cookies.remove("token");
-    setUser(null);
-    setIsAuthenticated(false);
+  const logout = async () => {
+    try {
+      await logoutRequest();
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.log("Error al cerrar sesión:", error);
+    }
   };
 
   useEffect(() => {
@@ -80,6 +88,8 @@ export const AuthProvider = ({ children }) => {
     };
     checkLogin();
   }, []);
+
+
 
   return (
     <AuthContext.Provider

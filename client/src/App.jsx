@@ -4,7 +4,7 @@ import { ProtectedRoute } from "./routes";
 
 import RegisterPage from "./pages/RegisterPage";
 import { LoginPage } from "./pages/LoginPage";
-import ResumenPage from "./pages/ResumenPage";
+//import ResumenPage from "./pages/ResumenPage";
 
 function App() {
   return (
@@ -12,11 +12,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<h1>Home Page</h1>} />
-          <Route path="/loguin" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route element={<ProtectedRoute />}>
+          {/* <Route element={<ProtectedRoute />}>
             <Route path="/resumen" element={<ResumenPage />} />
-          </Route>
+          </Route> */}
         </Routes>
       </BrowserRouter>
     </AuthProvider>

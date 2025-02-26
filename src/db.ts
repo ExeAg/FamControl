@@ -1,3 +1,5 @@
+//db.ts
+
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 
@@ -10,7 +12,17 @@ const db = new Sequelize(
     {
         host: process.env.DB_HOST || "localhost",
         dialect: "mysql",
+        logging: false,
     }
 );
+
+export const checkDbConnection = async () => {
+    try {
+        await db.authenticate();
+        console.log("Conexión a la base de datos exitosa.");
+    } catch (error: any) {
+        console.error("Error al conectar con la base de datos:", error.message);
+    }
+};
 
 export default db;

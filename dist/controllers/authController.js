@@ -21,9 +21,14 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email, password } = req.body;
+        console.log("Datos recibidos:", req.body);
         console.log("Password recibido:", password);
         if (!password || typeof password !== "string") {
             return res.status(400).json({ error: "Contraseña no válida" });
+        }
+        const userExists = yield user_model_1.default.findOne({ where: { email } });
+        if (userExists) {
+            return res.status(400).json({ error: "El usuario ya existe" });
         }
         const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
         console.log("Salt rounds:", saltRounds);
@@ -38,7 +43,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.error("Error en el registro:", error.message);
-        return res.status(500).json({ error: "Error en el servidor" });
+        return res.status(500).json({ error: "Error en el servidor", details: error.message });
     }
 });
 exports.register = register;
@@ -49,6 +54,8 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!userFound)
             return res.status(400).json({ message: "The email does not exist" });
         const isMatch = yield bcryptjs_1.default.compare(password, userFound.password);
+        console.log("Contraseña ingresada:", password);
+        console.log("Contraseña almacenada:", userFound.password);
         if (!isMatch)
             return res.status(400).json({ message: "The password is incorrect" });
         const token = yield (0, jwt_1.createAccessToken)({ id: userFound.id, username: userFound.username });
@@ -74,6 +81,7 @@ const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         const decoded = jsonwebtoken_1.default.verify(token, config_1.TOKEN_SECRET);
         const userFound = yield user_model_1.default.findByPk(decoded.id);
         if (!userFound) {
+            res.clearCookie("token");
             res.status(401).json({ message: "Unauthorized" });
             return;
         }
@@ -81,6 +89,7 @@ const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         next();
     }
     catch (error) {
+        res.clearCookie("token");
         res.status(401).json({ message: "Invalid token" });
     }
 });

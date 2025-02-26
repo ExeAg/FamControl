@@ -1,10 +1,13 @@
+//src/server.ts
 import express, { Application } from "express";
 import morgan from "morgan";
-import db from "./db";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import db, { checkDbConnection } from "./db";
 import User from "./models/user.model";
-import Ingreso from "./models/ingreso.model";
-import Gasto from "./models/gasto.model";
-import Categoria from "./models/categoria.model";
+// import Ingreso from "./models/ingreso.model";
+// import Gasto from "./models/gasto.model";
+// import Categoria from "./models/categoria.model";
 import authRoutes from "./routes/authRoutes";
 import familiaRoutes from "./routes/familiaRoutes";
 import ingresoRoutes from "./routes/ingresoRoutes";
@@ -18,28 +21,28 @@ class Server {
 
     constructor() {
         this.app = express();
-        this.port = process.env.PORT || "3000";
+        this.port = process.env.PORT || "4000";
         this.app.use(morgan("dev"));
-        this.middlewares(); 
-        this.routes(); 
+        this.middlewares();
+        this.routes();
         this.dbConnection();
     }
 
     async dbConnection() {
         try {
-            await db.authenticate();
+            await checkDbConnection();
             console.log("Database online");
-            await User.sync({ alter: true }); 
+            await User.sync({ alter: true });
             console.log("Tabla 'users' sincronizada");
 
-            await Ingreso.sync({ alter: true });
-            console.log("Tabla 'ingresos' sincronizada");
+            // await Ingreso.sync({ alter: true });
+            // console.log("Tabla 'ingresos' sincronizada");
 
-            await Gasto.sync({ alter: true });
-            console.log("Tabla 'gastos' sincronizada");
+            // await Gasto.sync({ alter: true });
+            // console.log("Tabla 'gastos' sincronizada");
 
-            await Categoria.sync({ alter: true });
-            console.log("Tabla 'categorias' sincronizada");
+            // await Categoria.sync({ alter: true });
+            // console.log("Tabla 'categorias' sincronizada");
 
         } catch (error: any) {
             console.error("Error al conectar a la base de datos:", error.message);
@@ -47,6 +50,18 @@ class Server {
     }
 
     middlewares() {
+        this.app.use(cookieParser());
+        this.app.use(cors({
+            origin: (origin, callback) => {
+                const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:5173"];
+                if (!origin || allowedOrigins.includes(origin)) {
+                    callback(null, true);
+                } else {
+                    callback(new Error("Not allowed by CORS"));
+                }
+            },
+            credentials: true, // Permite enviar cookies (autenticación con JWT)
+        }));
         this.app.use(express.json()); // Para Permitir JSON en las peticiones
     }
 
@@ -55,7 +70,7 @@ class Server {
         this.app.use("/api/familias", familiaRoutes);
         this.app.use("/api/ingresos", ingresoRoutes);
         this.app.use("/api/gastos", gastoRoutes);
-        this.app.use("/api/categorias", categoriaRoutes); 
+        this.app.use("/api/categorias", categoriaRoutes);
     }
 
     listen() {

@@ -1,3 +1,4 @@
+//client/src/pages/LoginPage.jsx
 import { useAuth } from "../context/authContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -21,7 +22,7 @@ export function LoginPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/tasks");
+      navigate("/");
     }
   }, [isAuthenticated]);
 
@@ -36,18 +37,18 @@ export function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Label htmlFor="email">Email:</Label>
           <Input
-            label="Write your email"
+            label="Ingrese su email"
             type="email"
-            name="email"
-            placeholder="youremail@domain.tld"
+            id="email"
+            placeholder="tuemail@dominio.tld"
             {...register("email", { required: true })}
           />
           <p>{errors.email?.message}</p>
 
-          <Label htmlFor="password">Password:</Label>
+          <Label htmlFor="password">Contraseña:</Label>
           <Input
             type="password"
-            name="password"
+            id="password"
             placeholder="Write your password"
             {...register("password", { required: true, minLength: 6 })}
           />
@@ -57,7 +58,7 @@ export function LoginPage() {
         </form>
 
         <p className="flex gap-x-2 justify-between">
-          Don't have an account? <Link to="/register" className="text-sky-500">Sign up</Link>
+          ¿No tienes cuenta? <Link to="/register" className="text-sky-500">Sign up</Link>
         </p>
       </Card>
     </div>

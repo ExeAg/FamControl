@@ -1,3 +1,4 @@
+//src/controllers/authController
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { TOKEN_SECRET } from "../config";
@@ -7,33 +8,39 @@ import bcrypt from "bcryptjs";
 
 
 export const register = async (req: Request, res: Response) => {
-    try {
-        const { username, email, password } = req.body;
+  try {
+    const { username, email, password } = req.body;
 
-        console.log("Password recibido:", password);
+    console.log("Datos recibidos:", req.body);
+    console.log("Password recibido:", password);
 
-        if (!password || typeof password !== "string") {
-            return res.status(400).json({ error: "Contraseña no válida" });
-        }
-
-        const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
-        console.log("Salt rounds:", saltRounds);
-
-        const salt = await bcrypt.genSalt(saltRounds);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        const newUser = await User.create({
-            username,
-            email,
-            password: hashedPassword,
-        });
-
-        return res.status(201).json({ message: "Usuario registrado con éxito", user: newUser });
-
-    } catch (error: any) {
-        console.error("Error en el registro:", error.message);
-        return res.status(500).json({ error: "Error en el servidor" });
+    if (!password || typeof password !== "string") {
+      return res.status(400).json({ error: "Contraseña no válida" });
     }
+
+    const userExists = await User.findOne({ where: { email } });
+    if (userExists) {
+      return res.status(400).json({ error: "El usuario ya existe" });
+    }
+
+    const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
+    console.log("Salt rounds:", saltRounds);
+
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    return res.status(201).json({ message: "Usuario registrado con éxito", user: newUser });
+
+  } catch (error: any) {
+    console.error("Error en el registro:", error.message);
+    return res.status(500).json({ error: "Error en el servidor", details: error.message });
+  }
 };
 
 
@@ -45,6 +52,8 @@ export const login = async (req: Request, res: Response) => {
     if (!userFound) return res.status(400).json({ message: "The email does not exist" });
 
     const isMatch = await bcrypt.compare(password, userFound.password);
+    console.log("Contraseña ingresada:", password);
+    console.log("Contraseña almacenada:", userFound.password);
     if (!isMatch) return res.status(400).json({ message: "The password is incorrect" });
 
     const token = await createAccessToken({ id: userFound.id, username: userFound.username });
@@ -73,6 +82,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     const userFound = await User.findByPk(decoded.id);
 
     if (!userFound) {
+      res.clearCookie("token")
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
@@ -80,6 +90,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     req.user = userFound;
     next();
   } catch (error) {
+    res.clearCookie("token")
     res.status(401).json({ message: "Invalid token" });
   }
 };
