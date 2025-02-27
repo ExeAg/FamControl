@@ -37,6 +37,23 @@ User.init({
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
+    nombre: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: "El nombre es obligatorio",
+            },
+        },
+    },
+    familia_id: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'familias',
+            key: 'id'
+        }
+    }
 }, {
     sequelize: db_1.default,
     tableName: "users",

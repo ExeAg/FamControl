@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteFamilia = exports.updateFamilia = exports.createFamilia = exports.getFamiliaById = exports.getFamilias = void 0;
 const familia_model_1 = __importDefault(require("../models/familia.model"));
+const generarCodigoFamilia_1 = require("../utils/generarCodigoFamilia");
 // Obtener todas las familias (Para controlar a futuro)
 const getFamilias = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -43,7 +44,8 @@ exports.getFamiliaById = getFamiliaById;
 const createFamilia = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { nombre } = req.body;
     try {
-        const nuevaFamilia = yield familia_model_1.default.create({ nombre });
+        const codigo_compartir = yield (0, generarCodigoFamilia_1.generarCodigoFamiliaUnico)();
+        const nuevaFamilia = yield familia_model_1.default.create({ nombre, codigo_compartir });
         res.status(201).json(nuevaFamilia);
     }
     catch (error) {

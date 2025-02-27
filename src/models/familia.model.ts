@@ -4,6 +4,7 @@ import db from "../db";
 class Familia extends Model {
   public id!: number;
   public nombre!: string;
+  public codigo_compartir!: string;
 }
 
 Familia.init(
@@ -16,6 +17,11 @@ Familia.init(
     nombre: {
       type: DataTypes.STRING(100),
       allowNull: false,
+    },
+    codigo_compartir: {
+      type: DataTypes.STRING(6),
+      allowNull: false,
+      unique: true,
     },
   },
   {

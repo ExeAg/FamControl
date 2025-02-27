@@ -17,6 +17,11 @@ Familia.init({
         type: sequelize_1.DataTypes.STRING(100),
         allowNull: false,
     },
+    codigo_compartir: {
+        type: sequelize_1.DataTypes.STRING(6),
+        allowNull: false,
+        unique: true,
+    },
 }, {
     sequelize: db_1.default,
     tableName: "familias",

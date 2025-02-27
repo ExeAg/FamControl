@@ -10,10 +10,10 @@ import asyncHandler from "../middlewares/asyncHandler";
 
 const router = Router();
 
-router.get("/", asyncHandler(getFamilias));
-router.get("/:id", asyncHandler(getFamiliaById));
-router.post("/", asyncHandler(createFamilia));
-router.put("/:id", asyncHandler(updateFamilia));
-router.delete("/:id", asyncHandler(deleteFamilia));
+router.get("/familia", asyncHandler(getFamilias));
+router.get("/familia/:id", asyncHandler(getFamiliaById));
+router.post("/familia", asyncHandler(createFamilia));
+router.put("/familia/:id", asyncHandler(updateFamilia));
+router.delete("/familia/:id", asyncHandler(deleteFamilia));
 
 export default router;

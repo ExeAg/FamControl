@@ -20,7 +20,7 @@ const jwt_1 = require("../libs/jwt");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, nombre } = req.body;
         console.log("Datos recibidos:", req.body);
         console.log("Password recibido:", password);
         if (!password || typeof password !== "string") {
@@ -38,6 +38,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             username,
             email,
             password: hashedPassword,
+            nombre,
         });
         return res.status(201).json({ message: "Usuario registrado con éxito", user: newUser });
     }

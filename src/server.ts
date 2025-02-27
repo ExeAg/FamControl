@@ -6,14 +6,17 @@ import cookieParser from "cookie-parser";
 import { limpiarIndices } from "./scheduler/limpiarIndices"; 
 import db, { checkDbConnection } from "./db";
 import User from "./models/user.model";
+import Familia from "./models/familia.model";
 // import Ingreso from "./models/ingreso.model";
 // import Gasto from "./models/gasto.model";
 // import Categoria from "./models/categoria.model";
+import "./models/associations"
 import authRoutes from "./routes/authRoutes";
 import familiaRoutes from "./routes/familiaRoutes";
 import ingresoRoutes from "./routes/ingresoRoutes";
 import gastoRoutes from "./routes/gastoRoutes";
 import categoriaRoutes from "./routes/categoriaRoutes";
+
 
 
 class Server {
@@ -35,6 +38,9 @@ class Server {
             console.log("Database online");
             await User.sync({ alter: true });
             console.log("Tabla 'users' sincronizada");
+
+            await Familia.sync({ alter: true });
+            console.log("Tabla 'familias' sincronizada");
 
             // await Ingreso.sync({ alter: true });
             // console.log("Tabla 'ingresos' sincronizada");

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Familia from "../models/familia.model";
+import { generarCodigoFamiliaUnico } from "../utils/generarCodigoFamilia";
 
 // Obtener todas las familias (Para controlar a futuro)
 export const getFamilias = async (req: Request, res: Response) => {
@@ -27,7 +28,8 @@ export const getFamiliaById = async (req: Request, res: Response) => {
 export const createFamilia = async (req: Request, res: Response) => {
   const { nombre } = req.body;
   try {
-    const nuevaFamilia = await Familia.create({ nombre });
+    const codigo_compartir = await generarCodigoFamiliaUnico();
+    const nuevaFamilia = await Familia.create({ nombre, codigo_compartir });
     res.status(201).json(nuevaFamilia);
   } catch (error) {
     res.status(500).json({ message: "Error al crear familia", error });
@@ -41,7 +43,7 @@ export const updateFamilia = async (req: Request, res: Response) => {
   try {
     const familia = await Familia.findByPk(id);
     if (!familia) return res.status(404).json({ message: "Familia no encontrada" });
-    
+
     familia.nombre = nombre;
     await familia.save();
     res.json(familia);
@@ -56,7 +58,7 @@ export const deleteFamilia = async (req: Request, res: Response) => {
   try {
     const familia = await Familia.findByPk(id);
     if (!familia) return res.status(404).json({ message: "Familia no encontrada" });
-    
+
     await familia.destroy();
     res.json({ message: "Familia eliminada" });
   } catch (error) {

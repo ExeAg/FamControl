@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, nombre } = req.body;
 
     console.log("Datos recibidos:", req.body);
     console.log("Password recibido:", password);
@@ -33,6 +33,7 @@ export const register = async (req: Request, res: Response) => {
       username,
       email,
       password: hashedPassword,
+      nombre,
     });
 
     return res.status(201).json({ message: "Usuario registrado con éxito", user: newUser });

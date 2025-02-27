@@ -7,6 +7,7 @@ class User extends Model {
     public username!: string;
     public email!: string;
     public password!: string;
+    public nombre!: string;
 }
 
 User.init(
@@ -39,6 +40,23 @@ User.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        nombre: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: {
+                    msg: "El nombre es obligatorio",
+                },
+            },
+        },
+        familia_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+              model: 'familias', // O el nombre de la tabla familia
+              key: 'id'
+            }
+          }
     },
     {
         sequelize: db, // Conexión a la base de datos
