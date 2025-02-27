@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const limpiarIndices_1 = require("./scheduler/limpiarIndices");
 const db_1 = require("./db");
 const user_model_1 = __importDefault(require("./models/user.model"));
 // import Ingreso from "./models/ingreso.model";
@@ -81,6 +82,10 @@ class Server {
     listen() {
         this.app.listen(this.port, () => {
             console.log("Servidor corriendo en puerto " + this.port);
+            // Inicializa la limpieza de índices al arrancar el servidor
+            (0, limpiarIndices_1.limpiarIndices)()
+                .then(() => console.log("Limpieza de índices inicial completada"))
+                .catch((error) => console.error("Error al limpiar índices:", error));
         });
     }
 }

@@ -3,6 +3,7 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { limpiarIndices } from "./scheduler/limpiarIndices"; 
 import db, { checkDbConnection } from "./db";
 import User from "./models/user.model";
 // import Ingreso from "./models/ingreso.model";
@@ -76,6 +77,10 @@ class Server {
     listen() {
         this.app.listen(this.port, () => {
             console.log("Servidor corriendo en puerto " + this.port);
+            // Inicializa la limpieza de índices al arrancar el servidor
+            limpiarIndices()
+              .then(() => console.log("Limpieza de índices inicial completada"))
+              .catch((error) => console.error("Error al limpiar índices:", error));
         });
     }
 }

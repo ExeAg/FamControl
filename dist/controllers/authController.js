@@ -52,12 +52,12 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { email, password } = req.body;
         const userFound = yield user_model_1.default.findOne({ where: { email } });
         if (!userFound)
-            return res.status(400).json({ message: "The email does not exist" });
+            return res.status(400).json({ message: "El email no existe" });
         const isMatch = yield bcryptjs_1.default.compare(password, userFound.password);
         console.log("Contraseña ingresada:", password);
         console.log("Contraseña almacenada:", userFound.password);
         if (!isMatch)
-            return res.status(400).json({ message: "The password is incorrect" });
+            return res.status(400).json({ message: "La contraseña es incorrecta" });
         const token = yield (0, jwt_1.createAccessToken)({ id: userFound.id, username: userFound.username });
         res.cookie("token", token, {
             httpOnly: process.env.NODE_ENV !== "development",
