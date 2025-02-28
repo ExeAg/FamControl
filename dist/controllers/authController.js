@@ -65,7 +65,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             secure: true,
             sameSite: "none",
         });
-        res.json({ id: userFound.id, username: userFound.username, email: userFound.email });
+        res.json({ id: userFound.id, username: userFound.username, nombre: userFound.nombre, email: userFound.email });
     }
     catch (error) {
         return res.status(500).json({ message: error instanceof Error ? error.message : "Server error" });

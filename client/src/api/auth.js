@@ -1,4 +1,3 @@
-//client/src/api/auth.js
 import axios from "./axios";
 
 export const registerRequest = async (user) =>
@@ -10,4 +9,4 @@ export const loginRequest = async (user) => {
 };
 
 export const verifyTokenRequest = () => axios.get("/verify", { withCredentials: true });
-export const logoutRequest = () => axios.post("/logout", { withCredentials: true });
+export const logoutRequest = () => axios.post("/auth/logout", { withCredentials: true });

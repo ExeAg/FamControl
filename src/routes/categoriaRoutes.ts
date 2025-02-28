@@ -1,4 +1,4 @@
-// src/routes/categoriaRoutes.ts
+
 import { Router } from "express";
 import {
   getCategorias,

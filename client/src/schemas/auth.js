@@ -18,6 +18,13 @@ export const registerSchema = z
       .min(3, {
         message: "Username must be at least 3 characters",
       }),
+    nombre: z
+      .string({
+        required_error: "Nombre is required",
+      })
+      .min(3, {
+        message: "Nombre must be at least 3 characters",
+      }),
     email: z.string().email({
       message: "Please enter a valid email address",
     }),

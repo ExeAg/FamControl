@@ -1,12 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginSchema = exports.registerSchema = void 0;
-//src/schemas/authSchema.ts
 const zod_1 = require("zod");
 exports.registerSchema = zod_1.z.object({
     username: zod_1.z
         .string()
         .min(3, "El Usuario debe contener un mínimo de 3 caracteres"),
+    nombre: zod_1.z
+        .string()
+        .min(3, "El nombre debe contener un mínimo de 3 caracteres"),
     email: zod_1.z
         .string()
         .email("Formato de email inválido"),

@@ -1,4 +1,3 @@
-//src/controllers/authController
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { TOKEN_SECRET } from "../config";
@@ -65,7 +64,7 @@ export const login = async (req: Request, res: Response) => {
       sameSite: "none",
     });
 
-    res.json({ id: userFound.id, username: userFound.username, email: userFound.email });
+    res.json({ id: userFound.id, username: userFound.username, nombre: userFound.nombre, email: userFound.email });
   } catch (error) {
     return res.status(500).json({ message: error instanceof Error ? error.message : "Server error" });
   }

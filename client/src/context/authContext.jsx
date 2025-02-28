@@ -1,7 +1,7 @@
-//client/src/context/authContext.jsx
 import { useEffect, useState, createContext, useContext } from "react";
 import { loginRequest, registerRequest, verifyTokenRequest, logoutRequest } from "../api/auth";
 import Cookies from "js-cookie";
+
 
 const AuthContext = createContext();
 
@@ -31,14 +31,18 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await registerRequest(user);
       if (res.status === 201) {
-        setUser(res.data);
-        setIsAuthenticated(true);
+        // Retorna true si el registro fue exitoso
+        return true;
       }
+      return false;
     } catch (error) {
-      console.log(error.response.data);
-      setErrors(Array.isArray(error.response.data.message)
-        ? error.response.data.message
-        : [error.response.data.message || "Error en el registro"]);
+      console.log(error.response ? error.response.data : error);
+      setErrors(
+        error.response?.data?.message ||
+          error.message ||
+          "Error en el registro"
+      );
+      return false;
     }
   };
 
@@ -95,6 +99,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         signup,
         signin,
         logout,

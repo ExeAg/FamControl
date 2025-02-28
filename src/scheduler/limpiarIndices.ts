@@ -1,5 +1,4 @@
-import db from "../db"; // Asegúrate de que la ruta es correcta
-
+import db from "../db"; 
 interface IndexRow {
   index_name: string;
 }
@@ -11,7 +10,7 @@ export async function limpiarIndices(): Promise<void> {
       FROM information_schema.statistics
       WHERE table_schema = DATABASE() 
         AND table_name = 'users'
-        AND INDEX_NAME NOT IN ('PRIMARY', 'unique_email')
+        AND INDEX_NAME NOT IN ('PRIMARY', 'unique_email', 'familia_id' )
     `);
 
     const indexRows = results as IndexRow[];
@@ -25,5 +24,5 @@ export async function limpiarIndices(): Promise<void> {
   }
 }
 
-// El setInterval ya está configurado en este archivo para ejecutarse cada 24 horas:
+
 setInterval(limpiarIndices, 24 * 60 * 60 * 1000);

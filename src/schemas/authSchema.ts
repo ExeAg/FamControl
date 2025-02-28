@@ -1,10 +1,13 @@
-//src/schemas/authSchema.ts
+
 import { z } from "zod";
 
 export const registerSchema = z.object({
   username: z
   .string()
   .min(3, "El Usuario debe contener un mínimo de 3 caracteres"),
+  nombre: z
+  .string()
+  .min(3, "El nombre debe contener un mínimo de 3 caracteres"),
   email: z
   .string()
   .email("Formato de email inválido"),

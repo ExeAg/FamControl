@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.limpiarIndices = void 0;
-const db_1 = __importDefault(require("../db")); // Asegúrate de que la ruta es correcta
+const db_1 = __importDefault(require("../db"));
 function limpiarIndices() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -22,7 +22,7 @@ function limpiarIndices() {
       FROM information_schema.statistics
       WHERE table_schema = DATABASE() 
         AND table_name = 'users'
-        AND INDEX_NAME NOT IN ('PRIMARY', 'unique_email')
+        AND INDEX_NAME NOT IN ('PRIMARY', 'unique_email', 'familia_id' )
     `);
             const indexRows = results;
             for (const row of indexRows) {
@@ -36,6 +36,5 @@ function limpiarIndices() {
     });
 }
 exports.limpiarIndices = limpiarIndices;
-// El setInterval ya está configurado en este archivo para ejecutarse cada 24 horas:
 setInterval(limpiarIndices, 24 * 60 * 60 * 1000);
 //# sourceMappingURL=limpiarIndices.js.map

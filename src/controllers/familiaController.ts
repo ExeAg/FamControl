@@ -26,13 +26,20 @@ export const getFamiliaById = async (req: Request, res: Response) => {
 
 // Crear una nueva familia
 export const createFamilia = async (req: Request, res: Response) => {
-  const { nombre } = req.body;
   try {
+    const { nombre } = req.body;
+    if (!nombre) {
+      return res.status(400).json({ message: "El nombre es obligatorio" });
+    }
     const codigo_compartir = await generarCodigoFamiliaUnico();
     const nuevaFamilia = await Familia.create({ nombre, codigo_compartir });
-    res.status(201).json(nuevaFamilia);
-  } catch (error) {
-    res.status(500).json({ message: "Error al crear familia", error });
+    if (req.user) {
+      await req.user.update({ familia_id: nuevaFamilia.id });
+    }
+    return res.status(201).json({ message: "Familia creada", family: nuevaFamilia, user: req.user });
+  } catch (error: any) {
+    console.error("Error al crear familia:", error.message);
+    return res.status(500).json({ message: "Error al crear la familia", details: error.message });
   }
 };
 
